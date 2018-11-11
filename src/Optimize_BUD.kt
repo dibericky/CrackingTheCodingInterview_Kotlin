@@ -1,3 +1,5 @@
+import kotlin.test.assertEquals
+
 fun main(args: Array<String>) {
     // Problem1().finalVersion(30)
     // Problem2().initWithCharsOfTest()
@@ -250,9 +252,11 @@ class BCR {
      * Recursive version
      */
     private fun numElementCommonRecV1(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
+        if(indexA >= arrA.size || indexB >= arrB.size)return 0
+
         for (index in indexA until arrA.size) {
             if (arrB[indexB] == arrA[index]) return 1 + numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
-            else if (arrB[indexB] < arrA[index]) return numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
+            else if (arrB[indexB] < arrA[index]) return numElementCommonRecV1(arrA, arrB, index, indexB + 1)
         }
         return 0
     }
@@ -264,11 +268,13 @@ class BCR {
         data class Response(var result: Int)
 
         fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
+            if(indexA >= arrA.size || indexB >= arrB.size)return response
+
             for (index in indexA until arrA.size) {
                 if (arrB[indexB] == arrA[index]) {
                     response.result++
                     return recursion(arrA, arrB, index + 1, indexB + 1, response)
-                } else if (arrB[indexB] < arrA[index]) return recursion(arrA, arrB, index + 1, indexB + 1, response)
+                } else if (arrB[indexB] < arrA[index]) return recursion(arrA, arrB, index, indexB + 1, response)
             }
             return response
         }
@@ -278,15 +284,18 @@ class BCR {
     }
 
     fun findElementTest() {
-        fun testWithData(arrA: IntArray, arrB: IntArray, result: Int) {
-            assert(numElementCommonRecV1(arrA, arrB) == result)
-            assert(numElementCommonRecV2(arrA, arrB) == result)
-            assert(numElementInCommonIterative(arrA, arrB) == result)
+        fun testWithData(arrA: IntArray, arrB: IntArray, result: Int, message: String) {
+            assertEquals(result, numElementCommonRecV1(arrA, arrB), "$message RecV1")
+            assertEquals(result, numElementCommonRecV2(arrA, arrB), "$message RecV2")
+            assertEquals(result, numElementInCommonIterative(arrA, arrB), "$message Iterative")
         }
 
-        testWithData(intArrayOf(1, 4), intArrayOf(2, 3), 0)
-        testWithData(intArrayOf(1, 2), intArrayOf(2, 3), 1)
-        testWithData(intArrayOf(13, 27, 35, 40, 49, 55, 58, 60), intArrayOf(17, 35, 39, 40, 55, 58, 60), 3)
+        testWithData(intArrayOf(1), intArrayOf(2), 0, "Failed [1], [2]")
+        testWithData(intArrayOf(1), intArrayOf(1), 1, "Failed [1], [1]")
+        testWithData(intArrayOf(1, 4), intArrayOf(2, 3), 0, "Failed [1,4], [2,3]")
+        testWithData(intArrayOf(1, 2), intArrayOf(2, 3), 1, "Failed [1,2], [2,3]")
+        testWithData(intArrayOf(2,4,5,7,8,9), intArrayOf(3,4,6,7,9,10), 3, "Failed [2,4,5,7,8,9], [3,4,6,7,9,10]")
+        testWithData(intArrayOf(13, 27, 35, 40, 49, 55, 59), intArrayOf(17, 35, 39, 40, 55, 58, 60), 3, "Failed long arrays")
     }
 
 }
