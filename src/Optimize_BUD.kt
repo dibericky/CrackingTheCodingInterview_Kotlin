@@ -223,7 +223,11 @@ class BCR {
      * We could just do a linear search. As long as the linear search in B is just picking up where the last one left off, we know
      * that we're going to be operating in linear time.
      */
-    private fun numElementInCommon(arrA: IntArray, arrB: IntArray): Int {
+
+    /**
+     * Iterative version
+     */
+    private fun numElementInCommonIterative(arrA: IntArray, arrB: IntArray): Int {
         var startIndex = 0
         var found = 0
 
@@ -245,10 +249,10 @@ class BCR {
     /**
      * Recursive version
      */
-    private fun findElement(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
+    private fun numElementCommonRecV1(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
         for (index in indexA until arrA.size) {
-            if (arrB[indexB] == arrA[index]) return 1 + findElement(arrA, arrB, index + 1, indexB + 1)
-            else if (arrB[indexB] < arrA[index]) return findElement(arrA, arrB, index + 1, indexB + 1)
+            if (arrB[indexB] == arrA[index]) return 1 + numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
+            else if (arrB[indexB] < arrA[index]) return numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
         }
         return 0
     }
@@ -256,28 +260,28 @@ class BCR {
     /**
      * Tail Recursion version
      */
-    private fun findElementV2(arrA: IntArray, arrB: IntArray): Int {
+    private fun numElementCommonRecV2(arrA: IntArray, arrB: IntArray): Int {
         data class Response(var result: Int)
 
-        fun findElementRecursive(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
+        fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
             for (index in indexA until arrA.size) {
                 if (arrB[indexB] == arrA[index]) {
                     response.result++
-                    return findElementRecursive(arrA, arrB, index + 1, indexB + 1, response)
-                } else if (arrB[indexB] < arrA[index]) return findElementRecursive(arrA, arrB, index + 1, indexB + 1, response)
+                    return recursion(arrA, arrB, index + 1, indexB + 1, response)
+                } else if (arrB[indexB] < arrA[index]) return recursion(arrA, arrB, index + 1, indexB + 1, response)
             }
             return response
         }
 
-        return findElementRecursive(arrA, arrB).result
+        return recursion(arrA, arrB).result
 
     }
 
     fun findElementTest() {
         fun testWithData(arrA: IntArray, arrB: IntArray, result: Int) {
-            assert(findElement(arrA, arrB) == result)
-            assert(findElementV2(arrA, arrB) == result)
-            assert(numElementInCommon(arrA, arrB) == result)
+            assert(numElementCommonRecV1(arrA, arrB) == result)
+            assert(numElementCommonRecV2(arrA, arrB) == result)
+            assert(numElementInCommonIterative(arrA, arrB) == result)
         }
 
         testWithData(intArrayOf(1, 4), intArrayOf(2, 3), 0)
