@@ -1,9 +1,11 @@
 fun main(args: Array<String>) {
-   // Problem1().finalVersion(30)
-   // Problem2().initWithCharsOfTest()
+    // Problem1().finalVersion(30)
+    // Problem2().initWithCharsOfTest()
 
-    Problem2().mySolution("cbabadcbbabbcbabaabccbabc","abbc")
+    // Problem2().mySolution("cbabadcbbabbcbabaabccbabc","abbc")
+    BCR().findElementTest()
 }
+
 
 class Problem1 {
 /*
@@ -143,7 +145,7 @@ Problem: Print all positive integer solutions to the equation a^3 + b^3 = c^3 = 
     fun Int.pow(exponent: Int): Int = Math.pow(toDouble(), exponent.toDouble()).toInt()
 }
 
-class Problem2{
+class Problem2 {
     /*
     Given a smaller string s and a bigger string b, design an algorithm to find all permutations
     of the shorter string within the longer one.
@@ -151,38 +153,136 @@ class Problem2{
 
      */
 
-    fun mySolution(longer: String, shorter: String){
+    fun mySolution(longer: String, shorter: String) {
         var min = 0
         val windowLength = shorter.length
-        val map : MutableMap<Char, Int> = mutableMapOf()
-        val mapSupp : MutableMap<Char, Int> = mutableMapOf()
+        val map: MutableMap<Char, Int> = mutableMapOf()
+        val mapSupp: MutableMap<Char, Int> = mutableMapOf()
         map.initWithCharsOf(shorter)
 
-        for(i in 0..(longer.length-windowLength)){
-            val window = longer.substring(i, i+windowLength)
+        for (i in 0..(longer.length - windowLength)) {
+            val window = longer.substring(i, i + windowLength)
             mapSupp.clear()
             mapSupp.initWithCharsOf(window)
-            if(mapSupp.keys.size == map.keys.size){ //if size is different than I'm sure it's not a permutation
-                if(map.all { mapSupp[it.key] == it.value }){ //if is equal for all element of the map
-                    println("[$i, ${i+windowLength-1}] = $window")
+            if (mapSupp.keys.size == map.keys.size) { //if size is different than I'm sure it's not a permutation
+                if (map.all { mapSupp[it.key] == it.value }) { //if is equal for all element of the map
+                    println("[$i, ${i + windowLength - 1}] = $window")
                 }
             }
         }
     }
 
-    fun MutableMap<Char, Int>.initWithCharsOf(s: String){
+    fun MutableMap<Char, Int>.initWithCharsOf(s: String) {
         s.forEach {
-            val num = getOrPut(it){0}
-            this[it] = num+1
+            val num = getOrPut(it) { 0 }
+            this[it] = num + 1
         }
     }
 
-    fun initWithCharsOfTest(){
-        val map : MutableMap<Char, Int> = mutableMapOf()
+    fun initWithCharsOfTest() {
+        val map: MutableMap<Char, Int> = mutableMapOf()
         val prova = "abbc"
         map.initWithCharsOf(prova)
         assert(map['a'] == 1)
         assert(map['b'] == 2)
         assert(map['c'] == 1)
     }
+}
+
+class BCR {
+
+    /**
+     * Question: Given two sorted arrays, find the number of elements in common. The  arrays are the same length and each
+     * has all distinct elements.
+     * example:
+     *      A: 13   27  (35)  (40)  49  (55)  59
+     *      B: 17   (35)  39  (40)  (55)  58  60
+     *
+     * Bruteforce algorithm: O(N^2)
+     * BCR (Best Conceivable Runtime): O(N). We know we will hae to look at each element at least once and there are
+     * 2N total elements.
+     * We are driving towards an O(N) algorithm or an O(N logN) algorithm, because if we imagine out current
+     * algorithm's runtime ( O(N^2) ) as O(N*N), then getting to O(N) or O(N logN) might mean reducing the second
+     * O(N) in the equation to O(1) or O(logN).
+     * This is one way that BCR can be useful. We can use the runtime to get a "hint" for what we need to reduce.
+     * That second O(N) comes from searching. The array is sorted. Can we search in a sorted array in faster than
+     * O(N) time? Yes! Binary search. O(logN). So we would have O(N logN).
+     * Brute Force:  O(N^2)
+     * Improved Algorithm: O(N logN)
+     * Optimal Algorithm: ?
+     * BCR: O(N)
+     *
+     * We could just throw everything in B into a hash table. This will take O(N) time. Then, we just go through A and look up
+     * each element in the hashtable. This look up is O(1), so our runtime will be O(N).
+     * Can we do better? No, not in terms of runtime. We have achieved the fastest possible runtime.
+     * We could improve space complexity, in fact our algorithm would have the exact same runtime if the data wasn't sorted.
+     * So why did the interview give us sorted array?
+     *
+     * We're looking for an algorithm that operates in O(1) space (probably). We already have an O(N) space algorithm with optimal runtime.
+     * So we need to drop the hash table. We should use the fact that the arrays are sorted.
+     * We could just do a linear search. As long as the linear search in B is just picking up where the last one left off, we know
+     * that we're going to be operating in linear time.
+     */
+    private fun numElementInCommon(arrA: IntArray, arrB: IntArray): Int {
+        var startIndex = 0
+        var found = 0
+
+        for (indexB in 0 until arrB.size) {
+            for (indexA in startIndex until arrA.size) {
+                if (arrB[indexB] == arrA[indexA]) {
+                    found++
+                    startIndex = indexA + 1
+                    break
+                } else if (arrB[indexB] < arrA[indexA]) {
+                    break
+                }
+            }
+        }
+
+        return found
+    }
+
+    /**
+     * Recursive version
+     */
+    private fun findElement(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
+        for (index in indexA until arrA.size) {
+            if (arrB[indexB] == arrA[index]) return 1 + findElement(arrA, arrB, index + 1, indexB + 1)
+            else if (arrB[indexB] < arrA[index]) return findElement(arrA, arrB, index + 1, indexB + 1)
+        }
+        return 0
+    }
+
+    /**
+     * Tail Recursion version
+     */
+    private fun findElementV2(arrA: IntArray, arrB: IntArray): Int {
+        data class Response(var result: Int)
+
+        fun findElementRecursive(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
+            for (index in indexA until arrA.size) {
+                if (arrB[indexB] == arrA[index]) {
+                    response.result++
+                    return findElementRecursive(arrA, arrB, index + 1, indexB + 1, response)
+                } else if (arrB[indexB] < arrA[index]) return findElementRecursive(arrA, arrB, index + 1, indexB + 1, response)
+            }
+            return response
+        }
+
+        return findElementRecursive(arrA, arrB).result
+
+    }
+
+    fun findElementTest() {
+        fun testWithData(arrA: IntArray, arrB: IntArray, result: Int) {
+            assert(findElement(arrA, arrB) == result)
+            assert(findElementV2(arrA, arrB) == result)
+            assert(numElementInCommon(arrA, arrB) == result)
+        }
+
+        testWithData(intArrayOf(1, 4), intArrayOf(2, 3), 0)
+        testWithData(intArrayOf(1, 2), intArrayOf(2, 3), 1)
+        testWithData(intArrayOf(13, 27, 35, 40, 49, 55, 58, 60), intArrayOf(17, 35, 39, 40, 55, 58, 60), 3)
+    }
+
 }

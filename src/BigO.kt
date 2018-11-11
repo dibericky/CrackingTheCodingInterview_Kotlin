@@ -7,7 +7,7 @@ fun main(args: Array<String>){
 //    allFibWithCache(6)
 
 //    permutation("ciao")
-    powersOf2Test()
+ //   powersOf2Test()
 }
 
 /**
