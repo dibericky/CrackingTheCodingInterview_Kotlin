@@ -267,7 +267,7 @@ class BCR {
     private fun numElementCommonRecV2(arrA: IntArray, arrB: IntArray): Int {
         data class Response(var result: Int)
 
-        fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
+        tailrec fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
             if(indexA >= arrA.size || indexB >= arrB.size)return response
 
             for (index in indexA until arrA.size) {
