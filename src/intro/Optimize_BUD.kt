@@ -1,20 +1,10 @@
-import kotlin.test.assertEquals
+package intro
 
-fun main(args: Array<String>) {
-    // Problem1().finalVersion(30)
-    // Problem2().initWithCharsOfTest()
-
-    // Problem2().mySolution("cbabadcbbabbcbabaabccbabc","abbc")
-    BCR().findElementTest()
-}
-
-
-class Problem1 {
-/*
-Problem: Print all positive integer solutions to the equation a^3 + b^3 = c^3 = d^3,
-        where a,b,c,d are integers between 1 and 1000
+/**
+ * Problem: Print all positive integer solutions to the equation a^3 + b^3 = c^3 = d^3,
+ * where a,b,c,d are integers between 1 and 1000
  */
-
+class Problem1 {
     /**
      * Complexity: O(N^4)
      * Iterate through all possible values of a,b,c,d and checks if that combination happens to work.
@@ -145,50 +135,41 @@ Problem: Print all positive integer solutions to the equation a^3 + b^3 = c^3 = 
 
 
     fun Int.pow(exponent: Int): Int = Math.pow(toDouble(), exponent.toDouble()).toInt()
+
 }
 
+/**
+ * Given a smaller string s and a bigger string b, design an algorithm to find all permutations
+ * of the shorter string within the longer one.
+ * Print the location of each intro.permutation.
+ */
 class Problem2 {
-    /*
-    Given a smaller string s and a bigger string b, design an algorithm to find all permutations
-    of the shorter string within the longer one.
-    Print the location of each permutation.
 
-     */
+        fun mySolution(longer: String, shorter: String) {
+            var min = 0
+            val windowLength = shorter.length
+            val map: MutableMap<Char, Int> = mutableMapOf()
+            val mapSupp: MutableMap<Char, Int> = mutableMapOf()
+            map.initWithCharsOf(shorter)
 
-    fun mySolution(longer: String, shorter: String) {
-        var min = 0
-        val windowLength = shorter.length
-        val map: MutableMap<Char, Int> = mutableMapOf()
-        val mapSupp: MutableMap<Char, Int> = mutableMapOf()
-        map.initWithCharsOf(shorter)
-
-        for (i in 0..(longer.length - windowLength)) {
-            val window = longer.substring(i, i + windowLength)
-            mapSupp.clear()
-            mapSupp.initWithCharsOf(window)
-            if (mapSupp.keys.size == map.keys.size) { //if size is different than I'm sure it's not a permutation
-                if (map.all { mapSupp[it.key] == it.value }) { //if is equal for all element of the map
-                    println("[$i, ${i + windowLength - 1}] = $window")
+            for (i in 0..(longer.length - windowLength)) {
+                val window = longer.substring(i, i + windowLength)
+                mapSupp.clear()
+                mapSupp.initWithCharsOf(window)
+                if (mapSupp.keys.size == map.keys.size) { //if size is different than I'm sure it's not a intro.permutation
+                    if (map.all { mapSupp[it.key] == it.value }) { //if is equal for all element of the map
+                        println("[$i, ${i + windowLength - 1}] = $window")
+                    }
                 }
             }
         }
-    }
 
-    fun MutableMap<Char, Int>.initWithCharsOf(s: String) {
-        s.forEach {
-            val num = getOrPut(it) { 0 }
-            this[it] = num + 1
+        fun MutableMap<Char, Int>.initWithCharsOf(s: String) {
+            s.forEach {
+                val num = getOrPut(it) { 0 }
+                this[it] = num + 1
+            }
         }
-    }
-
-    fun initWithCharsOfTest() {
-        val map: MutableMap<Char, Int> = mutableMapOf()
-        val prova = "abbc"
-        map.initWithCharsOf(prova)
-        assert(map['a'] == 1)
-        assert(map['b'] == 2)
-        assert(map['c'] == 1)
-    }
 }
 
 class BCR {
@@ -201,18 +182,18 @@ class BCR {
      *      B: 17   (35)  39  (40)  (55)  58  60
      *
      * Bruteforce algorithm: O(N^2)
-     * BCR (Best Conceivable Runtime): O(N). We know we will hae to look at each element at least once and there are
+     * intro.BCR (Best Conceivable Runtime): O(N). We know we will hae to look at each element at least once and there are
      * 2N total elements.
      * We are driving towards an O(N) algorithm or an O(N logN) algorithm, because if we imagine out current
      * algorithm's runtime ( O(N^2) ) as O(N*N), then getting to O(N) or O(N logN) might mean reducing the second
      * O(N) in the equation to O(1) or O(logN).
-     * This is one way that BCR can be useful. We can use the runtime to get a "hint" for what we need to reduce.
+     * This is one way that intro.BCR can be useful. We can use the runtime to get a "hint" for what we need to reduce.
      * That second O(N) comes from searching. The array is sorted. Can we search in a sorted array in faster than
      * O(N) time? Yes! Binary search. O(logN). So we would have O(N logN).
      * Brute Force:  O(N^2)
      * Improved Algorithm: O(N logN)
      * Optimal Algorithm: ?
-     * BCR: O(N)
+     * intro.BCR: O(N)
      *
      * We could just throw everything in B into a hash table. This will take O(N) time. Then, we just go through A and look up
      * each element in the hashtable. This look up is O(1), so our runtime will be O(N).
@@ -226,76 +207,63 @@ class BCR {
      * that we're going to be operating in linear time.
      */
 
-    /**
-     * Iterative version
-     */
-    private fun numElementInCommonIterative(arrA: IntArray, arrB: IntArray): Int {
-        var startIndex = 0
-        var found = 0
+    companion object {
+        /**
+         * Iterative version
+         */
+        fun numElementInCommonIterative(arrA: IntArray, arrB: IntArray): Int {
+            var startIndex = 0
+            var found = 0
 
-        for (indexB in 0 until arrB.size) {
-            for (indexA in startIndex until arrA.size) {
-                if (arrB[indexB] == arrA[indexA]) {
-                    found++
-                    startIndex = indexA + 1
-                    break
-                } else if (arrB[indexB] < arrA[indexA]) {
-                    break
+            for (indexB in 0 until arrB.size) {
+                for (indexA in startIndex until arrA.size) {
+                    if (arrB[indexB] == arrA[indexA]) {
+                        found++
+                        startIndex = indexA + 1
+                        break
+                    } else if (arrB[indexB] < arrA[indexA]) {
+                        break
+                    }
                 }
             }
+
+            return found
         }
 
-        return found
-    }
-
-    /**
-     * Recursive version
-     */
-    private fun numElementCommonRecV1(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
-        if(indexA >= arrA.size || indexB >= arrB.size)return 0
-
-        for (index in indexA until arrA.size) {
-            if (arrB[indexB] == arrA[index]) return 1 + numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
-            else if (arrB[indexB] < arrA[index]) return numElementCommonRecV1(arrA, arrB, index, indexB + 1)
-        }
-        return 0
-    }
-
-    /**
-     * Tail Recursion version
-     */
-    private fun numElementCommonRecV2(arrA: IntArray, arrB: IntArray): Int {
-        data class Response(var result: Int)
-
-        tailrec fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
-            if(indexA >= arrA.size || indexB >= arrB.size)return response
+        /**
+         * Recursive version
+         */
+        fun numElementCommonRecV1(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0): Int {
+            if (indexA >= arrA.size || indexB >= arrB.size) return 0
 
             for (index in indexA until arrA.size) {
-                if (arrB[indexB] == arrA[index]) {
-                    response.result++
-                    return recursion(arrA, arrB, index + 1, indexB + 1, response)
-                } else if (arrB[indexB] < arrA[index]) return recursion(arrA, arrB, index, indexB + 1, response)
+                if (arrB[indexB] == arrA[index]) return 1 + numElementCommonRecV1(arrA, arrB, index + 1, indexB + 1)
+                else if (arrB[indexB] < arrA[index]) return numElementCommonRecV1(arrA, arrB, index, indexB + 1)
             }
-            return response
+            return 0
         }
 
-        return recursion(arrA, arrB).result
+        /**
+         * Tail Recursion version
+         */
+        fun numElementCommonRecV2(arrA: IntArray, arrB: IntArray): Int {
+            data class Response(var result: Int)
 
-    }
+            tailrec fun recursion(arrA: IntArray, arrB: IntArray, indexA: Int = 0, indexB: Int = 0, response: Response = Response(0)): Response {
+                if (indexA >= arrA.size || indexB >= arrB.size) return response
 
-    fun findElementTest() {
-        fun testWithData(arrA: IntArray, arrB: IntArray, result: Int, message: String) {
-            assertEquals(result, numElementCommonRecV1(arrA, arrB), "$message RecV1")
-            assertEquals(result, numElementCommonRecV2(arrA, arrB), "$message RecV2")
-            assertEquals(result, numElementInCommonIterative(arrA, arrB), "$message Iterative")
+                for (index in indexA until arrA.size) {
+                    if (arrB[indexB] == arrA[index]) {
+                        response.result++
+                        return recursion(arrA, arrB, index + 1, indexB + 1, response)
+                    } else if (arrB[indexB] < arrA[index]) return recursion(arrA, arrB, index, indexB + 1, response)
+                }
+                return response
+            }
+
+            return recursion(arrA, arrB).result
+
         }
-
-        testWithData(intArrayOf(1), intArrayOf(2), 0, "Failed [1], [2]")
-        testWithData(intArrayOf(1), intArrayOf(1), 1, "Failed [1], [1]")
-        testWithData(intArrayOf(1, 4), intArrayOf(2, 3), 0, "Failed [1,4], [2,3]")
-        testWithData(intArrayOf(1, 2), intArrayOf(2, 3), 1, "Failed [1,2], [2,3]")
-        testWithData(intArrayOf(2,4,5,7,8,9), intArrayOf(3,4,6,7,9,10), 3, "Failed [2,4,5,7,8,9], [3,4,6,7,9,10]")
-        testWithData(intArrayOf(13, 27, 35, 40, 49, 55, 59), intArrayOf(17, 35, 39, 40, 55, 58, 60), 3, "Failed long arrays")
     }
 
 }
