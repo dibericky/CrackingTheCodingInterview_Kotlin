@@ -168,7 +168,6 @@ class Intro{
                 else ->{
                     val prev = powersOf2(n / 2) //integer part of n/2.
                     val curr = prev*2
-                    println(curr)
                     return curr
                 }
             }
