@@ -97,6 +97,25 @@ class GraphSearch{
             }
         }
 
+        /**
+         * Given a directed graph, design an algorithm to find out whether there is a route between two nodes.
+         */
+        fun isThereRoute(a: NodeAdj, b: NodeAdj) : Boolean{
+            val visited = mutableListOf<NodeAdj>()
+            val toVisit = MyQueue<NodeAdj>()
+
+            toVisit.add(a)
+
+            while(!toVisit.isEmpty()){
+                val element = toVisit.remove()!!
+                visited.add(element)
+                for(n in element.children){
+                    if(n == b)return true
+                    if(!visited.contains(n))toVisit.add(n)
+                }
+            }
+            return false
+        }
 
     }
 }
